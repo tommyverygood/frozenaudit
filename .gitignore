@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+
+# Local staging of the paper's frozen deposit for the reconciliation tests;
+# point FROZENAUDIT_FROZEN_DIR here rather than committing these files.
+frozen/
+audit_report.json

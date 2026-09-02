@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+title: "frozenaudit: a protocol for auditing a released predictor under distribution shift"
+message: >-
+  If you use this software, please cite both the software and the accompanying
+  paper. The reference panel shipped with the ABCB1 instance has its own
+  sources, which must be cited independently -- see THIRD_PARTY_NOTICES.md.
+type: software
+license: MIT
+version: 0.2.0
+repository-code: "https://github.com/<your-org>/frozenaudit"
+abstract: >-
+  An endpoint-agnostic protocol for auditing a released predictor under
+  distribution shift: freeze the decision rules and hash them, stratify a
+  query set by structure-only distance to a reference set, contrast a
+  candidate abstention rule against the audited model's own confidence at
+  matched coverage, and evaluate pre-declared gates that can return
+  not_evaluable. Ships one worked instance covering ABCB1/P-glycoprotein
+  efflux risk. This is not a property predictor; the model bundles it
+  redistributes are objects of evaluation in the accompanying paper and
+  declare themselves development artefacts.
+keywords:
+  - model audit
+  - applicability domain
+  - selective prediction
+  - abstention
+  - distribution shift
+  - pre-registration
+  - coverage-matched evaluation
+  - ABCB1
+  - P-glycoprotein
+# ORCIDs and contact addresses are deliberately absent: two of the four are
+# not yet on record and one address is pending confirmation. Add them here
+# before release rather than leaving placeholder values.
+authors:
+  - given-names: Hongyan
+    family-names: Liu
+    affiliation: >-
+      School of Electrical Engineering and Computer Science, Faculty of
+      Engineering, Architecture and Information Technology, The University of
+      Queensland, Brisbane, QLD 4072, Australia
+  - given-names: Zeling
+    family-names: Xu
+    affiliation: >-
+      School of Engineering, Hong Kong University of Science and Technology,
+      Clear Water Bay, Kowloon, Hong Kong 999077, China
+  - given-names: Yuntao
+    family-names: Zou
+    affiliation: >-
+      School of Computer Science and Technology, Huazhong University of Science
+      and Technology, Wuhan 430074, China
+  - given-names: Ruixuan
+    family-names: Li
+    affiliation: >-
+      School of Computer Science and Technology, Huazhong University of Science
+      and Technology, Wuhan 430074, China

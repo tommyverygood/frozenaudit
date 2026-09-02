@@ -1,0 +1,4 @@
+name,smiles,note
+Bictegravir_demo,"O=C(NCc1c(F)cc(F)cc1F)c1cn2c(c(O)c1=O)C(=O)N1[C@H]3CC[C@H](C3)O[C@@H]1C2",high-output operational example only
+Acetaminophen_demo,"CC(=O)Nc1ccc(O)cc1",low-output operational example only
+Ethanol_demo,CCO,abstain-output operational example only

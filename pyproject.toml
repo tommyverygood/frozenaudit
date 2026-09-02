@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frozenaudit"
+version = "0.2.0"
+description = "A protocol for auditing a released predictor under distribution shift: freeze the rules, stratify by distance to a reference set, contrast against the model's own confidence at matched coverage, and evaluate pre-declared gates that can return not_evaluable. Ships one worked instance (ABCB1/P-gp efflux risk)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["model audit", "applicability domain", "selective prediction",
+            "abstention", "distribution shift", "pre-registration",
+            "coverage-matched evaluation", "ABCB1", "P-glycoprotein", "efflux"]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+# The core needs only numpy. Chemistry and the shipped instance need more;
+# see the optional extras. This split is enforced by tests/test_core_general.py,
+# which imports frozenaudit.core and must pass without RDKit installed.
+dependencies = [
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# Structure-only strata (frozenaudit.core.domain) and any chemical instance.
+chem = ["rdkit>=2024.3", "pandas>=2.0"]
+# The shipped ABCB1 instance, including its frozen bundles.
+abcb1 = ["rdkit>=2024.3", "pandas>=2.0", "scikit-learn>=1.4", "scipy>=1.11",
+         "joblib>=1.3"]
+test = ["pytest>=8"]
+all = ["frozenaudit[abcb1,test]"]
+
+[tool.setuptools]
+packages = ["frozenaudit", "frozenaudit.core", "frozenaudit.instances",
+            "frozenaudit.instances.abcb1"]
+
+[tool.setuptools.package-data]
+"frozenaudit.instances.abcb1" = ["_screener_cli.py"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
