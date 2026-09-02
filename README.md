@@ -117,7 +117,7 @@ has to be in the table.
 ## Install
 
 ```bash
-git clone https://github.com/<your-org>/frozenaudit
+git clone https://github.com/tommyverygood/frozenaudit
 cd frozenaudit
 pip install -e ".[abcb1,test]"     # or ".[chem]", or bare "." for core only
 ```

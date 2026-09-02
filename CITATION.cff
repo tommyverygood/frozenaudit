@@ -7,7 +7,7 @@ message: >-
 type: software
 license: MIT
 version: 0.2.0
-repository-code: "https://github.com/<your-org>/frozenaudit"
+repository-code: "https://github.com/tommyverygood/frozenaudit"
 abstract: >-
   An endpoint-agnostic protocol for auditing a released predictor under
   distribution shift: freeze the decision rules and hash them, stratify a
