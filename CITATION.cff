@@ -28,9 +28,11 @@ keywords:
   - coverage-matched evaluation
   - ABCB1
   - P-glycoprotein
-# ORCIDs and contact addresses are deliberately absent: two of the four are
-# not yet on record and one address is pending confirmation. Add them here
-# before release rather than leaving placeholder values.
+# Addresses are given for the two corresponding authors only, and match the
+# manuscript. ORCIDs are deliberately absent for Liu and Li: they are not yet
+# on record, and a wrong identifier is worse than a missing one -- ORCID is a
+# permanent handle that resolves to a specific person. Add them here before
+# the repository is made public.
 authors:
   - given-names: Hongyan
     family-names: Liu
@@ -45,11 +47,13 @@ authors:
       Clear Water Bay, Kowloon, Hong Kong 999077, China
   - given-names: Yuntao
     family-names: Zou
+    email: zouyuntao@hust.edu.cn
     affiliation: >-
       School of Computer Science and Technology, Huazhong University of Science
       and Technology, Wuhan 430074, China
   - given-names: Ruixuan
     family-names: Li
+    email: D202587187@hust.edu.cn
     affiliation: >-
       School of Computer Science and Technology, Huazhong University of Science
       and Technology, Wuhan 430074, China
