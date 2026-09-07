@@ -69,9 +69,19 @@ DECLARED = {
                "prediction rather than an audit, use it instead",
     },
     "reference_pool_licence": {
-        "structures": "CC BY-SA 3.0 (ChEMBL; share-alike)",
+        # The pool is 443 + 63 de-duplicated to 477, and the two halves are
+        # under different terms. Share-alike binds the ChEMBL half only; an
+        # adapter's licence reaches your own contributions, not the CC BY
+        # material you incorporate, so the 63 direct rows stay CC BY 4.0.
+        "structures_443": "CC BY-SA 3.0 (ChEMBL; share-alike)",
         "labels": "CC BY 4.0 (Daood et al. 2025, "
                   "DOI 10.1021/acs.molpharmaceut.5c01065)",
+        "direct_panel_63": "CC BY 4.0 (Sóskuti et al. 2024, "
+                           "DOI 10.3390/pharmaceutics16060736; "
+                           "derived from supplementary Table S1)",
+        "modified": "yes -- structures standardised, net efflux ratio "
+                    "recomputed against the matched Mock line, binarised at "
+                    "ER >= 2, and 63 of 84 parsed entities retained",
         "evidence_tier": "B_author_curated_no_row_primary_assay",
     },
     "transfer_evidence": {

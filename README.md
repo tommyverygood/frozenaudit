@@ -269,19 +269,29 @@ Treat the pool as a weak-label reference, not as measured ground truth.
 
 ## Licence
 
-Three licences apply to different files. This is not boilerplate — the
-share-alike term on the structures binds anything you redistribute.
+Four licences apply to different parts. This is not boilerplate — the
+share-alike term on the ChEMBL structures binds anything derived from them,
+and it does **not** extend to the rest of the pool.
 
 | what | licence |
 | --- | --- |
 | code (`frozenaudit/`, `examples/`, `tests/`) | MIT — see `LICENSE` |
-| the 443 reference structures | CC BY-SA 3.0, from ChEMBL — **share-alike** |
+| the 443 ChEMBL reference structures | CC BY-SA 3.0 — **share-alike** |
 | the substrate labels' curation | CC BY 4.0, Daood et al. 2025 |
+| the 63-compound direct MDR1 panel | CC BY 4.0, Sóskuti et al. 2024 |
 
-Full attribution and exact obligations in
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). In short: if you
-redistribute the reference panel or anything derived from it, that portion
-goes out under CC BY-SA 3.0 with ChEMBL attributed.
+The 477-member pool is 443 + 63 de-duplicated, so it mixes the two. That is
+permitted: CC lists BY → BY-SA as an allowed adapter's licence, and BY 4.0
+imposes no share-alike of its own. But an adapter's licence reaches only your
+own contributions, so redistributing the merged pool **does not** convert the
+63 Sóskuti rows into share-alike material, and describing the whole pool as
+CC BY-SA would impose a term CC BY 4.0 does not carry. Attribute each portion
+to its own source and keep the share-alike obligation scoped to the ChEMBL
+rows and their derivatives.
+
+Both non-code portions have been modified — standardised, recomputed and
+binarised — as `THIRD_PARTY_NOTICES.md` records per source. Full attribution
+and exact obligations are there.
 
 ---
 
