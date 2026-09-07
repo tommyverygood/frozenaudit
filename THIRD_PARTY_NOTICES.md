@@ -5,9 +5,9 @@ share-alike term in section 1 is binding on anything you redistribute.
 
 ## 1. Reference structures — ChEMBL (CC BY-SA 3.0)
 
-`model/abcb1_screener_v0_1_training_audit.csv` and the reference rows and
-fingerprints embedded in `model/ABCB1_screener_v0_1.joblib` and
-`model/ABCB1_selective_uncertainty_v0_4_dev.joblib` are derived from ChEMBL
+`frozenaudit/instances/abcb1/model/abcb1_screener_v0_1_training_audit.csv` and the reference rows and
+fingerprints embedded in `frozenaudit/instances/abcb1/model/ABCB1_screener_v0_1.joblib` and
+`frozenaudit/instances/abcb1/model/ABCB1_selective_uncertainty_v0_4_dev.joblib` are derived from ChEMBL
 records.
 
 * Source: ChEMBL, European Molecular Biology Laboratory --- European
@@ -46,7 +46,7 @@ above whenever the pool's labels are used or reported.
 
 ## 3. Direct-evidence panel
 
-`model/ABCB1_assay_aware_candidate_v0_3_dev.joblib` embeds a 63-compound panel
+`frozenaudit/instances/abcb1/model/ABCB1_assay_aware_candidate_v0_3_dev.joblib` embeds a 63-compound panel
 assembled from published same-system MDR1 measurements. Those measurements
 remain the property of their original publishers and are cited in the
 accompanying paper; the panel is redistributed here only as the model's frozen

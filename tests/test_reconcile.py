@@ -19,7 +19,7 @@ from frozenaudit.core import domain, gates
 from frozenaudit.instances.abcb1 import load_pool
 
 FROZEN = Path(os.environ.get("FROZENAUDIT_FROZEN_DIR", ""))
-MODEL = Path(__file__).resolve().parent.parent / "model"
+MODEL = Path(__file__).resolve().parent.parent / "frozenaudit" / "instances" / "abcb1" / "model"
 
 
 def _pool():

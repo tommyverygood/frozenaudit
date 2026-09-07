@@ -39,8 +39,17 @@ all = ["frozenaudit[abcb1,test]"]
 packages = ["frozenaudit", "frozenaudit.core", "frozenaudit.instances",
             "frozenaudit.instances.abcb1"]
 
+# The ABCB1 instance is nothing without its frozen bundles and reference table,
+# so they ship inside the package rather than beside it. A non-editable
+# `pip install .` would otherwise import cleanly and then fail at first use.
 [tool.setuptools.package-data]
-"frozenaudit.instances.abcb1" = ["_screener_cli.py"]
+"frozenaudit.instances.abcb1" = [
+  "_screener_cli.py",
+  "model/*.joblib",
+  "model/*.csv",
+  "model/*.json",
+  "model/*.md",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

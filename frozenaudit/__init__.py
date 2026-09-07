@@ -15,7 +15,7 @@ The package is in two halves, and the split is the whole design:
 
 Two things this package is not
 ------------------------------
-**It is not a property predictor.** The bundles under ``model/`` are objects
+**It is not a property predictor.** The bundles under ``frozenaudit/instances/abcb1/model/`` are objects
 of evaluation in the accompanying paper, not products of it. Every one of them
 declares itself a development artefact, and the strict blind-pool gate on the
 binary substrate call came back ``fail``. They ship so that the audit is

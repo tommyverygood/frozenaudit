@@ -24,11 +24,11 @@ HERE = Path(__file__).resolve().parent
 # Repackaged for standalone use: model files sit in ../model rather than in the
 # original project tree. sys.path is extended so the two sibling helper modules
 # resolve when this file is imported rather than run as a script.
-# frozenaudit/instances/abcb1/ -> repo root, where model/ sits.
+# model/ ships inside the package, next to this file.
 PROJECT = HERE.parent.parent.parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
-_MODEL_DIR = PROJECT / "model"
+_MODEL_DIR = HERE / "model"
 SCRIPT_DIR = PROJECT / "数据" / "scripts"
 V0_3_DIR = _MODEL_DIR
 sys.path.insert(0, str(SCRIPT_DIR))

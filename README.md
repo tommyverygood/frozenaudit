@@ -55,7 +55,7 @@ because that arm is free.
 
 ## What this is not
 
-**Not a property predictor.** The bundles under `model/` are objects of
+**Not a property predictor.** The bundles under `frozenaudit/instances/abcb1/model/` are objects of
 evaluation in the accompanying paper, not products of it. All three declare
 themselves development artefacts, and
 `instances.abcb1.mask.load_bundles()` writes those declarations to stderr on

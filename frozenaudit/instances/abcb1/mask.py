@@ -45,8 +45,8 @@ from pathlib import Path
 import joblib
 
 _HERE = Path(__file__).resolve().parent
-# frozenaudit/instances/abcb1/ -> repo root -> model/
-_MODEL_DIR = _HERE.parent.parent.parent / "model"
+# model/ ships inside the package, so a non-editable install keeps it importable.
+_MODEL_DIR = _HERE / "model"
 
 SELECTIVE = _MODEL_DIR / "ABCB1_selective_uncertainty_v0_4_dev.joblib"
 PRIMARY = _MODEL_DIR / "ABCB1_screener_v0_1.joblib"

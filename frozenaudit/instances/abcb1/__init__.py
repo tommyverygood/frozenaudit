@@ -37,8 +37,8 @@ from . import mask  # noqa: F401
 
 __all__ = ["load_pool", "declared_gates", "DECLARED", "mask", "MODEL_DIR"]
 
-# frozenaudit/instances/abcb1/ -> repo root -> model/
-MODEL_DIR = Path(__file__).resolve().parent.parent.parent.parent / "model"
+# model/ ships inside the package, so a non-editable install keeps it importable.
+MODEL_DIR = Path(__file__).resolve().parent / "model"
 
 DECLARED = {
     "endpoint": "ABCB1/P-glycoprotein efflux risk for a standardized "
