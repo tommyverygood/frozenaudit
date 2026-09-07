@@ -28,32 +28,13 @@ keywords:
   - coverage-matched evaluation
   - ABCB1
   - P-glycoprotein
-# Addresses are given for the two corresponding authors only, and match the
-# manuscript. ORCIDs are deliberately absent for Liu and Li: they are not yet
-# on record, and a wrong identifier is worse than a missing one -- ORCID is a
-# permanent handle that resolves to a specific person. Add them here before
-# the repository is made public.
+# ANONYMISED FOR PEER REVIEW.
+#
+# The manuscript is under double-blind review and names this tool in its
+# title, so a reviewer can find this repository by searching for it. The
+# author block that belongs here -- four names, three affiliations and the
+# two corresponding addresses -- is held out of the public repository until
+# the paper is accepted, and is restored (with the missing ORCIDs for Liu
+# and Li) in the same commit that adds the release DOI.
 authors:
-  - given-names: Hongyan
-    family-names: Liu
-    affiliation: >-
-      School of Electrical Engineering and Computer Science, Faculty of
-      Engineering, Architecture and Information Technology, The University of
-      Queensland, Brisbane, QLD 4072, Australia
-  - given-names: Zeling
-    family-names: Xu
-    affiliation: >-
-      School of Engineering, Hong Kong University of Science and Technology,
-      Clear Water Bay, Kowloon, Hong Kong 999077, China
-  - given-names: Yuntao
-    family-names: Zou
-    email: zouyuntao@hust.edu.cn
-    affiliation: >-
-      School of Computer Science and Technology, Huazhong University of Science
-      and Technology, Wuhan 430074, China
-  - given-names: Ruixuan
-    family-names: Li
-    email: D202587187@hust.edu.cn
-    affiliation: >-
-      School of Computer Science and Technology, Huazhong University of Science
-      and Technology, Wuhan 430074, China
+  - name: "Anonymised for peer review"
