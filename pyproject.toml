@@ -7,6 +7,9 @@ name = "frozenaudit"
 version = "0.2.0"
 description = "A protocol for auditing a released predictor under distribution shift: freeze the rules, stratify by distance to a reference set, contrast against the model's own confidence at matched coverage, and evaluate pre-declared gates that can return not_evaluable. Ships one worked instance (ABCB1/P-gp efflux risk)."
 readme = "README.md"
+# 3.11 is the floor the pure-Python core needs. The shipped ABCB1 bundles were
+# built and tested on the combination in requirements-lock.txt (Python 3.12.13);
+# that is the only runtime the frozen numbers have been reproduced on.
 requires-python = ">=3.11"
 license = { text = "MIT" }
 keywords = ["model audit", "applicability domain", "selective prediction",
@@ -30,7 +33,10 @@ dependencies = [
 # Structure-only strata (frozenaudit.core.domain) and any chemical instance.
 chem = ["rdkit>=2024.3", "pandas>=2.0"]
 # The shipped ABCB1 instance, including its frozen bundles.
-abcb1 = ["rdkit>=2024.3", "pandas>=2.0", "scikit-learn>=1.4", "scipy>=1.11",
+# scikit-learn >=1.9 is a hard floor, not a preference: the shipped bundles were
+# pickled with 1.9.0, and an older one unpickles them without error and then
+# fails inside predict_proba. mask.load_bundles refuses to load below this.
+abcb1 = ["rdkit>=2024.3", "pandas>=2.0", "scikit-learn>=1.9", "scipy>=1.11",
          "joblib>=1.3"]
 test = ["pytest>=8"]
 all = ["frozenaudit[abcb1,test]"]

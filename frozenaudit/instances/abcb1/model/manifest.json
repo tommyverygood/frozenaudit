@@ -32,5 +32,12 @@
     "数据/processed/abcb1_selective_screener_v0_4_validation_v1.json": "58e41c318c7bceeb822f41eeb7d5ad55b1b02294da998218a55d9112892864b3"
   },
   "entrypoint": "模型/ABCB1_selective_screener_v0_4_dev/predict_abcb1_selective.py",
-  "claim_boundary": "ABCB1 efflux-risk triage for a standardized free/released small-molecule structure; not intact-ADC transport, intracellular unbound exposure, resistance, efficacy, clinical DDI, or universal assay-independent substrate truth"
+  "claim_boundary": "ABCB1 efflux-risk triage for a standardized free/released small-molecule structure; not intact-ADC transport, intracellular unbound exposure, resistance, efficacy, clinical DDI, or universal assay-independent substrate truth",
+  "shipped_sha256": {
+    "model/ABCB1_selective_uncertainty_v0_4_dev.joblib": "c56fb6b8f6f8bf13472a1a2d433b05d4c6a35eb2490ba84ce9371395b8bbff8b",
+    "model/ABCB1_screener_v0_1.joblib": "fbc92dfa99583386ba124141fed5e77c6ecf8a59850301a6533db3883b298ac3",
+    "model/ABCB1_assay_aware_candidate_v0_3_dev.joblib": "ebe6d1a8d5f06afc5c2d0b306dfd5266af56fd28fefd130147d20c5e015b907a",
+    "model/abcb1_screener_v0_1_training_audit.csv": "54979f1037817d6a218d31301c59a1056b0123747f1aacbbf2e12ddc85c8d747"
+  },
+  "shipped_sha256_note": "sha256 of the files as distributed, keyed by path relative to the package directory. The artifacts block above records the internal build paths this bundle was produced from; those paths are not part of the distribution. frozenaudit.instances.abcb1.mask.verify_shipped_files() checks this block on every load."
 }

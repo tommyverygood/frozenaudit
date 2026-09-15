@@ -14,6 +14,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from frozenaudit.instances.abcb1 import mask  # noqa: E402
 
+# These four load the bundles, so they need the runtime the bundles were
+# pickled with. On an older scikit-learn the load now raises by design; that is
+# a property of the interpreter, not a defect in this package, so skip.
+pytestmark = pytest.mark.skipif(not mask.runtime_is_supported(),
+                                reason=str(mask.runtime_problem()))
+
 EXPECTED = ("development_selective_risk_screener_not_future_source_validated",
             "development_research_screener_gate_failed",
             "single_source_internal_development_candidate_not_externally_validated")

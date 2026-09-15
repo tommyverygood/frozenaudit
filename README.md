@@ -181,6 +181,25 @@ tagged = mask.apply_to(my_predictions, decisions)
 print(DECLARED["blind_gate_verdict"])   # the fail verdict travels with the code
 ```
 
+### Runtime
+
+The three bundles were pickled with the versions in `requirements-lock.txt`:
+
+```
+python 3.12.13   scikit-learn 1.9.0   numpy 2.5.1   scipy 1.18.0
+rdkit 2026.03.4  joblib 1.5.3
+```
+
+scikit-learn below 1.9 unpickles them without complaint and then fails inside
+`predict_proba`. `mask.load_bundles()` therefore refuses to load on such a
+runtime and says so, rather than letting every molecule come back as an
+abstention -- abstaining is a legitimate output of this protocol, so a broken
+install must not be able to imitate one. `mask.runtime_problem()` returns that
+diagnosis as a string, or `None` when the runtime is supported.
+
+Every shipped file is checked against `model/manifest.json` on load
+(`mask.verify_shipped_files()`); a mismatch raises rather than warns.
+
 ### Command line
 
 ```bash

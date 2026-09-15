@@ -34,11 +34,21 @@ score, the model's own distance from its decision threshold is the better
 selector and this mask makes things worse. The mask earns its place when the
 base score is poorly calibrated or its endpoint does not match the question
 being asked.
+
+Runtime
+-------
+The three bundles were pickled with the versions in ``requirements-lock.txt``
+(scikit-learn 1.9.0). An older scikit-learn unpickles them without complaint
+and then fails inside ``predict_proba``, so :func:`load_bundles` refuses to
+load on an unsupported runtime instead of letting the failure surface later as
+an abstention. See :func:`runtime_problem`.
 """
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -51,8 +61,63 @@ _MODEL_DIR = _HERE / "model"
 SELECTIVE = _MODEL_DIR / "ABCB1_selective_uncertainty_v0_4_dev.joblib"
 PRIMARY = _MODEL_DIR / "ABCB1_screener_v0_1.joblib"
 DIRECT = _MODEL_DIR / "ABCB1_assay_aware_candidate_v0_3_dev.joblib"
+MANIFEST = _MODEL_DIR / "manifest.json"
 
 ANSWERED = ("high_ABCB1_efflux_risk", "low_ABCB1_efflux_risk")
+
+# The bundles were fitted and pickled under this scikit-learn. Unpickling under
+# an older one raises InconsistentVersionWarning and then breaks at predict
+# time (1.9 dropped attributes that 1.3-era estimators expect to find), so the
+# floor is a hard requirement rather than a recommendation.
+MIN_SKLEARN = (1, 9)
+
+
+class ScreenerError(RuntimeError):
+    """The shipped screener failed on an input for a reason that is not a decision.
+
+    Raised rather than converted into an abstention: an abstention is a
+    reported outcome of the protocol, and a library that returns one after an
+    internal failure makes a broken install indistinguishable from chemistry
+    outside the reference pool.
+    """
+
+
+def runtime_problem() -> str | None:
+    """Describe why this interpreter cannot load the bundles, or return None.
+
+    Kept separate from :func:`require_runtime` so that callers and tests can
+    branch on the condition without catching an exception.
+    """
+    try:
+        import sklearn
+    except ImportError:
+        return ("scikit-learn is not installed; the ABCB1 instance needs it. "
+                'Install the extra: pip install "frozenaudit[abcb1]"')
+    parts = []
+    for chunk in str(sklearn.__version__).split(".")[:2]:
+        digits = "".join(c for c in chunk if c.isdigit())
+        parts.append(int(digits) if digits else 0)
+    found = tuple(parts)
+    if found < MIN_SKLEARN:
+        want = ".".join(str(n) for n in MIN_SKLEARN)
+        return (f"the shipped bundles were pickled with scikit-learn "
+                f"{want}.x but this interpreter has {sklearn.__version__}. "
+                f"They would unpickle and then fail at predict time. "
+                f'Install a supported runtime: pip install "scikit-learn>={want}" '
+                f"(see requirements-lock.txt for the full tested set)")
+    return None
+
+
+def runtime_is_supported() -> bool:
+    """True when the bundles can be loaded on this interpreter."""
+    return runtime_problem() is None
+
+
+def require_runtime() -> None:
+    """Raise :class:`ScreenerError` if the runtime cannot load the bundles."""
+    problem = runtime_problem()
+    if problem is not None:
+        raise ScreenerError(problem)
 
 
 def _screener_module():
@@ -70,8 +135,57 @@ def _screener_module():
     return mod
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def verify_shipped_files(model_dir: Path = _MODEL_DIR) -> dict:
+    """Check the shipped files against ``manifest.json``'s ``shipped_sha256``.
+
+    The v0.4 bundle carries ``dependency_hashes`` for the other two, and the
+    screener verifies those on load, but nothing covered the v0.4 bundle
+    itself or the reference CSV -- a bundle cannot hash itself. The manifest
+    closes that gap for the files as distributed.
+
+    Returns a path -> sha256 mapping of what was checked. Raises
+    :class:`ScreenerError` on the first mismatch, naming the file: a changed
+    bundle is a different protocol, not a warning.
+    """
+    manifest_path = model_dir / "manifest.json"
+    if not manifest_path.exists():
+        raise ScreenerError(f"{manifest_path} is missing; the shipped files "
+                            "cannot be verified")
+    recorded = json.loads(manifest_path.read_text(encoding="utf-8")).get(
+        "shipped_sha256", {})
+    if not recorded:
+        raise ScreenerError(f"{manifest_path} has no shipped_sha256 block; "
+                            "this package predates integrity verification")
+    checked = {}
+    package_dir = model_dir.parent
+    for rel, expected in recorded.items():
+        path = package_dir / rel
+        if not path.exists():
+            raise ScreenerError(f"{rel} is recorded in manifest.json but is "
+                                "not present; the package is incomplete")
+        found = _sha256(path)
+        if found != expected:
+            raise ScreenerError(
+                f"{rel} does not match manifest.json: expected "
+                f"{expected[:16]}..., found {found[:16]}.... A modified bundle "
+                "is a different protocol; do not report numbers from it as this "
+                "instance's."
+            )
+        checked[rel] = found
+    return checked
+
+
 def load_bundles(selective: Path = SELECTIVE, primary: Path = PRIMARY,
-                 direct: Path = DIRECT, disclose: bool = True) -> dict:
+                 direct: Path = DIRECT, disclose: bool = True,
+                 verify: bool = True) -> dict:
     """Load the three frozen bundles and report what they say about themselves.
 
     The ``status`` and ``claim_boundary`` strings are returned rather than
@@ -84,8 +198,26 @@ def load_bundles(selective: Path = SELECTIVE, primary: Path = PRIMARY,
     import time because a library that prints when imported is a nuisance in
     other people's pipelines; pass ``disclose=False`` to silence it once you
     are reporting the strings yourself.
+
+    Loading goes through the shipped screener's own ``load_packages``, which
+    verifies the v0.1 and v0.3 bundles against the hashes recorded inside the
+    v0.4 bundle. ``verify=True`` additionally checks every shipped file against
+    ``manifest.json``. Pass ``verify=False`` only when deliberately loading
+    substituted bundles, and say so wherever you report the result.
+
+    Raises
+    ------
+    ScreenerError
+        If the runtime cannot load the bundles, or a shipped file does not
+        match its recorded hash.
     """
-    sel, pri, dir_ = joblib.load(selective), joblib.load(primary), joblib.load(direct)
+    require_runtime()
+    if verify and (selective, primary, direct) == (SELECTIVE, PRIMARY, DIRECT):
+        verify_shipped_files()
+    mod = _screener_module()
+    # load_packages checks sha256 of primary and direct against the hashes
+    # frozen inside the selective bundle, and raises on mismatch.
+    sel, pri, dir_ = mod.load_packages(selective, primary, direct)
     declared = {
         "v0.4_status": sel.get("status"),
         "v0.4_claim_boundary": sel.get("claim_boundary"),
@@ -108,8 +240,14 @@ def decide(smiles_list, bundles: dict | None = None) -> list[dict]:
 
     Returns one dict per input: ``accepted`` (bool), ``risk_call`` (the
     screener's own three-state output), ``probability``, and ``reasons``
-    (empty when accepted). An unparseable structure abstains with a reason
-    rather than raising.
+    (empty when accepted).
+
+    An unparseable structure abstains with ``unresolved_structure`` rather than
+    raising -- that comes from the screener's own return value, not from
+    catching an exception here. Anything that does raise is an internal
+    failure and is re-raised as :class:`ScreenerError`, because an abstention
+    returned for a broken install would be indistinguishable from an
+    abstention returned for chemistry outside the reference pool.
     """
     b = bundles if bundles is not None else load_bundles()
     mod = _screener_module()
@@ -117,11 +255,11 @@ def decide(smiles_list, bundles: dict | None = None) -> list[dict]:
     for smiles in smiles_list:
         try:
             res = mod.predict_one(smiles, b["selective"], b["primary"], b["direct"])
-        except Exception as exc:                     # noqa: BLE001
-            out.append({"smiles": smiles, "accepted": False, "risk_call": "abstain",
-                        "probability": None,
-                        "reasons": [f"screener_error: {type(exc).__name__}"]})
-            continue
+        except Exception as exc:  # noqa: BLE001 - re-raised with context below
+            raise ScreenerError(
+                f"the shipped screener failed on {smiles!r}: "
+                f"{type(exc).__name__}: {exc}"
+            ) from exc
         call = res.get("decision") or res.get("risk_call") or res.get("final_decision_state")
         reasons = res.get("abstention_reasons") or res.get("reasons") or []
         out.append({"smiles": smiles, "accepted": call in ANSWERED, "risk_call": call,
