@@ -100,3 +100,22 @@ included in this repository: the AstraZeneca GNN-MTL MDCK-ER and NIH-MDCK-ER
 checkpoints (Apache-2.0, obtain from their own release), Deep-PK, and ADMET-AI.
 Only the measured numbers are reproduced here; obtain each model from its own
 distribution under its own terms.
+
+No third-party model's per-molecule outputs ship in this repository. The `score`
+column of `examples/demo_predictions.csv` is computed by the v0.4 screener
+shipped here, not by any compared model.
+
+## 5. Example files
+
+`examples/demo_predictions.csv` holds 300 molecules from the external evaluation
+set of the accompanying paper. Its `smiles` and `observed` columns come from the
+public ADME data set released with Fang et al. (MIT licence,
+<https://github.com/molecularinformatics/Computational-ADME>); all 300 structures
+are members of that set and none is a member of the reference pool, so the file
+is a query set rather than a slice of the shipped panels. Its `score` column is
+this project's own v0.4 output, as stated in section 4.
+
+`examples/example_queries.csv` and `examples/example_predictions.csv` are two
+hand-picked structures (bictegravir, paracetamol) with the shipped screener's
+output, included as an operational smoke example. Neither molecule belongs to
+the external set or to the reference pool.
