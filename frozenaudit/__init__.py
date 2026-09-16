@@ -1,24 +1,27 @@
-"""frozenaudit -- a protocol for auditing a released predictor under distribution shift.
+"""EffluxScope -- a computational framework for evaluating ABCB1 efflux predictors
+under chemical-space shift.
+
+The Python package name ``frozenaudit`` is retained for compatibility.
 
 The package is in two halves, and the split is the whole design:
 
 :mod:`frozenaudit.core`
-    The protocol. Endpoint-agnostic: freeze the rules, stratify by distance to
-    a reference set, contrast against the model's own confidence at matched
+    The evaluation workflow. Endpoint-agnostic: record the rules, stratify by
+    distance to a reference set, contrast against the model's own confidence at matched
     coverage, evaluate pre-declared gates that can return ``not_evaluable``,
     report what was and was not established. No property, no panel, no weights.
 
 :mod:`frozenaudit.instances`
     Worked instances. One ships: :mod:`frozenaudit.instances.abcb1`, the
-    ABCB1/P-glycoprotein efflux-risk audit from the accompanying paper,
-    complete with its reference panel and its three frozen model bundles.
+    ABCB1/P-glycoprotein efflux-risk evaluation from the accompanying paper,
+    complete with its reference panel and its three fixed model bundles.
 
 Two things this package is not
 ------------------------------
 **It is not a property predictor.** The bundles under ``frozenaudit/instances/abcb1/model/`` are objects
 of evaluation in the accompanying paper, not products of it. Every one of them
 declares itself a development artefact, and the strict blind-pool gate on the
-binary substrate call came back ``fail``. They ship so that the audit is
+binary substrate call came back ``fail``. They ship so that the evaluation is
 reproducible, and :func:`frozenaudit.instances.abcb1.mask.load_bundles` prints
 their self-declarations to stderr on every call for that reason. If you want
 an ABCB1 substrate prediction, a better free option exists -- see the README.
@@ -27,7 +30,7 @@ an ABCB1 substrate prediction, a better free option exists -- see the README.
 is across five *models* on one *endpoint*. The core is written to be endpoint
 -agnostic and its tests exercise it on synthetic non-chemical data, but
 "this code does not hard-code an endpoint" is a statement about the code, not
-evidence that the protocol's conclusions carry to another property. Running it
+evidence that the framework's conclusions carry to another property. Running it
 on a second endpoint is open work; :mod:`frozenaudit.instances` documents the
 interface for doing so.
 

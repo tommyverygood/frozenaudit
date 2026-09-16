@@ -1,15 +1,20 @@
-# frozenaudit
+# EffluxScope
 
-A protocol for auditing a **released** predictor under distribution shift —
-and one worked instance of it.
+A computational framework for evaluating ABCB1 efflux predictors under
+chemical-space shift.
 
-The name states the discipline: every threshold, mask and gate is **frozen**
-before any score is read, and what comes back is an **audit** of someone
-else's model, never a new prediction of your own.
+EffluxScope combines structure-based stratification, coverage-matched
+comparisons and pre-declared decision criteria to evaluate released
+predictors. Its endpoint-agnostic core ships with an ABCB1/P-glycoprotein
+worked instance. Reports record whether the evaluation rules were fixed
+before scoring, keeping exploratory analyses distinct from confirmatory ones.
+
+For compatibility, the Python distribution and import package remain named
+`frozenaudit`; existing imports, APIs and environment variables continue to work.
 
 ```
 frozenaudit/
-├── core/          the protocol. No endpoint, no panel, no weights.
+├── core/          the evaluation workflow. No endpoint, no panel, no weights.
 └── instances/     worked instances. One ships: ABCB1/P-gp efflux risk.
 ```
 
@@ -25,17 +30,18 @@ instance.
 
 | step | module | what it enforces |
 | --- | --- | --- |
-| 1. freeze | `core.freeze` | hash the protocol description, so drift between "the rules I declared" and "the rules I ran" is detectable rather than arguable |
+| 1. record | `core.freeze` | hash the evaluation specification, so drift between "the rules I declared" and "the rules I ran" is detectable rather than arguable |
 | 2. stratify | `core.domain` | distance to a reference set, computed from structure alone — no measured outcome is read, so strata can be assigned before any label is known |
 | 3. contrast | `core.contrast` | four arms at explicitly reported coverage, including the model's **own** confidence as the baseline the selector must beat |
 | 4. gates | `core.gates` | pre-declared criteria that can return `not_evaluable`, so "we could not tell" never gets reported as "it failed" |
-| 5. report | `core.protocol` | emit all of it, and state whether the freeze actually preceded the scoring |
+| 5. report | `core.protocol` | emit all of it, and state whether the rules were fixed before scoring |
 
 Step 5 is the one that is easy to skip and expensive to omit.
 `Audit.report()` records the order its steps ran in, and if scoring happened
-before freezing it downgrades the whole run to `exploratory` no matter how the
-gates came out. A gate that passes in an unfrozen run is a hypothesis, and the
-report says so instead of leaving the reader to work it out.
+before the rules were fixed it downgrades the whole run to `exploratory`,
+regardless of the gate results. A gate that passes without rules fixed in
+advance is a hypothesis, and the report says so instead of leaving the reader
+to work it out.
 
 ### Step 3 in particular
 
@@ -72,18 +78,18 @@ screener's own binary calls reach balanced accuracy **0.582** (MCC 0.168,
 ROC-AUC 0.625) — second worst of the five models compared. A freely available
 endpoint-aligned alternative, the AstraZeneca GNN-MTL MDCK-ER checkpoint
 (Apache-2.0), reaches **0.743** on the same set. On a separate strict
-regulatory blind pool (n = 33, model frozen and hash-verified before scoring)
+regulatory blind pool (n = 33, model fixed and hash-verified before scoring)
 the pre-declared gate on its binary calls returned **fail**.
 
 So: **do not use this as a substrate predictor.** If you want an efflux-risk
 score, use a better one. What this package is for is the *abstention* and the
-audit around it.
+evaluation around it.
 
 **Not validated across endpoints.** The transfer evidence below is across
 five *models* on one *endpoint*. `core` is written to be endpoint-agnostic and
 `tests/test_core_general.py` exercises it on synthetic non-chemical data — but
 "this code hard-codes no endpoint" is a statement about the code, not evidence
-that the protocol's conclusions carry to another property. A second worked
+that the framework's conclusions carry to another property. A second worked
 instance is open work. Do not cite the architecture as cross-endpoint
 validation.
 
@@ -95,7 +101,7 @@ At the 17.3% coverage the mask selects, against each model's **own**
 threshold-distance margin at that same coverage (balanced accuracy, same
 external set):
 
-| base model | no selection | own margin | frozen mask | mask − own margin |
+| base model | no selection | own margin | fixed mask | mask − own margin |
 | --- | --- | --- | --- | --- |
 | Deep-PK P-gp substrate | 0.578 | 0.529 | 0.628 | **+0.098** |
 | this project's v0.4 score | 0.582 | 0.637 | 0.735 | **+0.098** |
@@ -117,8 +123,8 @@ has to be in the table.
 ## Install
 
 ```bash
-git clone https://github.com/tommyverygood/frozenaudit
-cd frozenaudit
+git clone https://github.com/tommyverygood/EffluxScope
+cd EffluxScope
 pip install -e ".[abcb1,test]"     # or ".[chem]", or bare "." for core only
 ```
 
@@ -130,7 +136,7 @@ Extras, because the core is deliberately light:
 | `chem` | rdkit, pandas | adds `core.domain` — structure-only strata |
 | `abcb1` | + scikit-learn, scipy, joblib | the shipped instance and its bundles |
 
-`requirements-lock.txt` records the exact versions the frozen numbers were
+`requirements-lock.txt` records the exact versions the reported numbers were
 produced under. Newer RDKit releases can change fingerprint details; if the
 reconciliation tests fail after an upgrade, pin to the lock file.
 
@@ -138,7 +144,7 @@ reconciliation tests fail after an upgrade, pin to the lock file.
 
 ## Quick start
 
-### Audit your own model, your own endpoint
+### Evaluate your own model, your own endpoint
 
 No molecules required — this path needs only scores, labels and a threshold.
 
@@ -152,7 +158,7 @@ audit = Audit("my_endpoint_v1", gates=[
                requires=("ci95_low",)),
 ])
 
-# 1. freeze -- before you look at anything
+# 1. record the rules -- before examining outcomes
 lock = audit.freeze({"threshold": 0.5, "metric": "balanced_accuracy"})
 print(lock.short)          # paste this into your methods section
 
@@ -193,7 +199,7 @@ rdkit 2026.03.4  joblib 1.5.3
 scikit-learn below 1.9 unpickles them without complaint and then fails inside
 `predict_proba`. `mask.load_bundles()` therefore refuses to load on such a
 runtime and says so, rather than letting every molecule come back as an
-abstention -- abstaining is a legitimate output of this protocol, so a broken
+abstention -- abstaining is a legitimate output of this framework, so a broken
 install must not be able to imitate one. `mask.runtime_problem()` returns that
 diagnosis as a string, or `None` when the runtime is supported.
 
@@ -224,7 +230,7 @@ DECLARED: dict                           # what the instance must disclose
 
 Three things worth getting right, learned from building the one that ships:
 
-**The pool is the audited model's training set, not a convenient public set.**
+**The pool is the evaluated model's training set, not a convenient public set.**
 The whole meaning of "out of distribution" depends on which distribution. If
 you do not know what a released model was trained on, say so in your report
 rather than substituting something available and calling the result an
@@ -232,10 +238,10 @@ applicability domain.
 
 **Keep the `declared` strings verbatim.** `Audit.freeze()` hashes them, so an
 edit after the fact is detectable — which is the point. Rewording a gate to
-match what you found is the failure mode this whole protocol exists to catch.
+match what you found is the failure mode this workflow is designed to detect.
 
 **Do not invent a selector.** Most instances should not contribute one. The
-honest default is the audited model's own margin, and `core.contrast` computes
+honest default is the evaluated model's own margin, and `core.contrast` computes
 it for free as the baseline arm.
 
 And one on licensing: the moment an instance ships a reference panel, the
@@ -245,11 +251,12 @@ record the answer in `DECLARED`.
 
 ---
 
-## Reproducing the protocol
+## Reproducing the reported analysis
 
-`core.domain` and `core.contrast` are faithful reimplementations of the frozen
-protocol, not independent re-derivations, and the test suite proves it. Point
-`FROZENAUDIT_FROZEN_DIR` at a directory holding the paper's frozen files:
+`core.domain` and `core.contrast` are faithful reimplementations of the
+archived analysis specification, not independent re-derivations, and the test
+suite proves it. Point
+`FROZENAUDIT_FROZEN_DIR` at a directory holding the paper's archived result files:
 
 ```bash
 FROZENAUDIT_FROZEN_DIR=/path/to/frozen pytest -q
@@ -263,7 +270,7 @@ FROZENAUDIT_FROZEN_DIR=/path/to/frozen pytest -q
 | `test_contrast_reproduces_published_table` | all three arms × five comparators, plus the native-margin selection row by row | `abcb1_public_predictor_metrics_v1.csv`, `..._predictions_long_v1.csv` |
 
 Agreement is to machine precision. If any of these fails, **this package is
-wrong and the frozen file is right.**
+wrong and the archived result file is right.**
 
 Without those files the reconciliation tests skip; `tests/test_core_general.py`
 needs none of them and always runs.

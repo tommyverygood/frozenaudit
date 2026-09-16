@@ -5,15 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "frozenaudit"
 version = "0.2.0"
-description = "A protocol for auditing a released predictor under distribution shift: freeze the rules, stratify by distance to a reference set, contrast against the model's own confidence at matched coverage, and evaluate pre-declared gates that can return not_evaluable. Ships one worked instance (ABCB1/P-gp efflux risk)."
+description = "EffluxScope: a computational framework for evaluating ABCB1 efflux predictors under chemical-space shift, combining structure-based stratification, coverage-matched comparisons and pre-declared decision criteria."
 readme = "README.md"
 # 3.11 is the floor the pure-Python core needs. The shipped ABCB1 bundles were
 # built and tested on the combination in requirements-lock.txt (Python 3.12.13);
 # that is the only runtime the frozen numbers have been reproduced on.
 requires-python = ">=3.11"
 license = { text = "MIT" }
-keywords = ["model audit", "applicability domain", "selective prediction",
-            "abstention", "distribution shift", "pre-registration",
+keywords = ["model evaluation", "applicability domain", "selective prediction",
+            "abstention", "distribution shift", "chemical-space shift",
             "coverage-matched evaluation", "ABCB1", "P-glycoprotein", "efflux"]
 classifiers = [
   "Intended Audience :: Science/Research",
@@ -28,6 +28,9 @@ classifiers = [
 dependencies = [
   "numpy>=1.26",
 ]
+
+[project.urls]
+Repository = "https://github.com/tommyverygood/EffluxScope"
 
 [project.optional-dependencies]
 # Structure-only strata (frozenaudit.core.domain) and any chemical instance.

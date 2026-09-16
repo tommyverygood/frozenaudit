@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "frozenaudit: a protocol for auditing a released predictor under distribution shift"
+title: "EffluxScope: a computational framework for evaluating ABCB1 efflux predictors under chemical-space shift"
 message: >-
   If you use this software, please cite both the software and the accompanying
   paper. The reference panel shipped with the ABCB1 instance has its own
@@ -7,24 +7,26 @@ message: >-
 type: software
 license: MIT
 version: 0.2.0
-repository-code: "https://github.com/tommyverygood/frozenaudit"
+repository-code: "https://github.com/tommyverygood/EffluxScope"
 abstract: >-
-  An endpoint-agnostic protocol for auditing a released predictor under
-  distribution shift: freeze the decision rules and hash them, stratify a
-  query set by structure-only distance to a reference set, contrast a
-  candidate abstention rule against the audited model's own confidence at
-  matched coverage, and evaluate pre-declared gates that can return
-  not_evaluable. Ships one worked instance covering ABCB1/P-glycoprotein
-  efflux risk. This is not a property predictor; the model bundles it
-  redistributes are objects of evaluation in the accompanying paper and
+  EffluxScope is a computational framework for evaluating ABCB1 efflux
+  predictors under chemical-space shift. Its endpoint-agnostic core records
+  and hashes the decision rules, stratifies a query set by structure-only
+  distance to a reference set, compares a candidate abstention rule with the
+  evaluated model's own confidence at matched coverage, and evaluates
+  pre-declared gates that can return not_evaluable. Reports distinguish rules
+  fixed before scoring from exploratory analyses. The software ships one
+  worked instance covering ABCB1/P-glycoprotein efflux risk. This is not a
+  property predictor; the model bundles it redistributes are objects of
+  evaluation in the accompanying paper and
   declare themselves development artefacts.
 keywords:
-  - model audit
+  - model evaluation
   - applicability domain
   - selective prediction
   - abstention
   - distribution shift
-  - pre-registration
+  - chemical-space shift
   - coverage-matched evaluation
   - ABCB1
   - P-glycoprotein
